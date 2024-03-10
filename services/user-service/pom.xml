@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.writiger</groupId>
+        <groupId>com.ds</groupId>
         <artifactId>docstore-rest-service</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -19,7 +19,7 @@
     <dependencies>
         <!--common-->
         <dependency>
-            <groupId>com.writiger</groupId>
+            <groupId>com.ds</groupId>
             <artifactId>ds-common</artifactId>
             <version>1.0.0</version>
         </dependency>
@@ -43,6 +43,16 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+        <!--nacos配置管理-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <!--读取bootstrap文件-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
         <!--ok-http-->
         <dependency>
             <groupId>io.github.openfeign</groupId>
@@ -50,9 +60,21 @@
         </dependency>
         <!--跨服务-->
         <dependency>
-            <groupId>com.writiger</groupId>
+            <groupId>com.ds</groupId>
             <artifactId>ds-api</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <!--单元测试-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--工具包-->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -61,6 +83,16 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>4.4.0</version>
         </dependency>
     </dependencies>
     <build>

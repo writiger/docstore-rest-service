@@ -3,4 +3,4 @@
 * DO（Domain Object）：领域对象，就是从现实世界中抽象出来的有形或无形的业务实体。
 * PO（Persistent Object）：持久化对象，它跟持久层（通常是关系型数据库）的数据结构形成一一对应的映射关系，如果持久层是关系型数据库，那么，数据表中的每个字段（或若干个）就对应PO的一个（或若干个）属性。
 
-![](C:\Users\73192\Desktop\毕业设计\代码\docustore-rest-service\docs\src\time.png)
+![](.\src\time.png)
