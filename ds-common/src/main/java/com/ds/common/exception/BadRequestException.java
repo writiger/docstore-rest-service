@@ -1,5 +1,11 @@
 package com.ds.common.exception;
 
+
+/**
+ * @author writiger
+ * @description
+ * @create_at 2024-03-08 19:18
+ */
 public class BadRequestException extends CommonException{
 
     public BadRequestException(String message) {

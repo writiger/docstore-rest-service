@@ -2,6 +2,11 @@ package com.ds.common.exception;
 
 import lombok.Getter;
 
+/**
+ * @author writiger
+ * @description
+ * @create_at 2024-03-08 19:17
+ */
 @Getter
 public class CommonException extends RuntimeException{
     private int code;
