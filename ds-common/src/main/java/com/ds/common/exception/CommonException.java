@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * @author writiger
  * @description
- * @create_at 2024-03-08 19:17
+ * @create_at 2024-03-09 19:17
  */
 @Getter
 public class CommonException extends RuntimeException{
