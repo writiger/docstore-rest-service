@@ -15,6 +15,7 @@
         <module>services/user-service</module>
         <module>services/comment-service</module>
         <module>services/doc-service</module>
+        <module>services/belong-service</module>
     </modules>
 
     <properties>
