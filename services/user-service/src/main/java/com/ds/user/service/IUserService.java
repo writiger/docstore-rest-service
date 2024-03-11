@@ -7,4 +7,6 @@ import com.ds.user.domain.vo.UserLoginVo;
 
 public interface IUserService extends IService<User> {
     UserLoginVo login(LoginFormDTO loginFormDTO);
+
+//    void register(RegisterDTO registerDTO)
 }

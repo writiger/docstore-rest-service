@@ -22,6 +22,10 @@ public class UserLoginVo {
     private String avatar;
     private String uid;
 
+    public UserLoginVo(){
+
+    }
+
     public UserLoginVo(User user,String token){
         this.token = token;
         this.account = user.getAccount();

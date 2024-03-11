@@ -2,6 +2,7 @@ package com.ds.user.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ds.common.exception.AccountIsEmptyException;
 import com.ds.common.exception.BadRequestException;
 import com.ds.common.exception.ForbiddenException;
 import com.ds.user.config.JwtProperties;
@@ -42,14 +43,16 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         String password = loginDTO.getPassword();
         //2. 查询用户数据
         User user = lambdaQuery().eq(User::getAccount, account).one();
-        Assert.notNull(user, "账号错误");
-        //3. 判断用户状态
-        if (user.getStatus() == UserStatus.FROZEN) {
-            throw new ForbiddenException("用户被封禁");
+        if(user==null){
+            throw new AccountIsEmptyException("该账号为空");
         }
-        //4. 验证密码
+        //3. 验证密码
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadRequestException("用户名或密码错误");
+        }
+        //4. 判断用户状态
+        if (user.getStatus() == UserStatus.FROZEN) {
+            throw new ForbiddenException("用户被封禁");
         }
         //5. 生成TOKEN
         String token = jwtTool.createToken(user.getId(), jwtProperties.getTokenTTL());
