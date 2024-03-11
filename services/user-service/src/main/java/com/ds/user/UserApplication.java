@@ -1,6 +1,5 @@
 package com.ds.user;
 
-import com.alibaba.nacos.api.annotation.NacosProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
