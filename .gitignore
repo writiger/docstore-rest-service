@@ -62,3 +62,4 @@ services/user-service/src/main/resources/application.yaml
 services/user-service/src/main/resources/application-local.yaml
 services/user-service/src/main/resources/bootstrap.yaml
 services/user-service/src/main/resources/application-test.yaml
+/logs
