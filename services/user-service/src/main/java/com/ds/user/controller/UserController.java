@@ -3,6 +3,7 @@ package com.ds.user.controller;
 import com.ds.common.domain.R;
 import com.ds.common.exception.CommonException;
 import com.ds.user.domain.dto.LoginFormDTO;
+import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.vo.UserLoginVo;
 import com.ds.user.service.IUserService;
 import io.swagger.annotations.Api;
@@ -42,9 +43,24 @@ public class UserController {
             return R.error(e);
         }catch (Exception e){
             // 记录未知错误
-            System.out.println(e);
-            logger.info(e.getMessage());
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
         }
         return R.ok(loginVo);
+    }
+
+    @ApiOperation("用户注册接口")
+    @PostMapping("register")
+    public R<Void> register(@RequestBody @Validated RegisterFormDTO registerFormDTO){
+        try{
+            userService.register(registerFormDTO);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok();
     }
 }
