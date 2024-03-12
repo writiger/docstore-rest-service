@@ -1,6 +1,5 @@
 package com.ds.user.enums;
 
-import com.alibaba.nacos.shaded.org.checkerframework.checker.units.qual.A;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.ds.common.exception.BadRequestException;
 import lombok.Getter;

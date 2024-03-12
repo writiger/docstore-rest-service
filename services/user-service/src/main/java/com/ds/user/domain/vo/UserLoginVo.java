@@ -35,6 +35,6 @@ public class UserLoginVo {
         this.belong = user.getBelong();
         this.status = user.getStatus();
         this.avatar = user.getAvatar();
-        this.uid = user.getUid();
+        this.uid = user.getUuid();
     }
 }

@@ -1,6 +1,9 @@
 package com.ds.user.service.impl;
 
-import com.ds.user.service.IUserService;
+import com.ds.common.utils.ShortUUID;
+import com.ds.user.domain.dto.RegisterFormDTO;
+import com.ds.user.enums.UserLevel;
+import com.ds.user.enums.UserStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,4 +28,25 @@ public class UserServiceImplTest {
     public void testGetUserList(){
         userService.login(null);
     }
+
+    @Test
+    public void testAccountIsExist(){
+        RegisterFormDTO registerFormDTO = new RegisterFormDTO();
+        registerFormDTO.setAccount("root");
+        userService.register(registerFormDTO);
+    }
+
+    @Test
+    public void testRegister(){
+        RegisterFormDTO user = new RegisterFormDTO();
+        user.setAccount("admin");
+        user.setEmail("admin@qq.com");
+        user.setPassword1("123456");
+        user.setPassword2("123456");
+        user.setName("admin");
+        user.setBelong("dlnu");
+        user.setVerify("test");
+        userService.register(user);
+    }
+
 }

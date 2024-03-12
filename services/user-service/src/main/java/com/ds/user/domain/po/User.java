@@ -66,9 +66,9 @@ public class User implements Serializable {
     private String avatar;
 
     /**
-     * uid(9位数id,从100000000开始)
+     * uuid 22位
      */
-    private String uid;
+    private String uuid;
 
 
 }
