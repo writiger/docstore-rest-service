@@ -5,7 +5,6 @@ import com.ds.common.exception.*;
 import com.ds.user.config.JwtProperties;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
-import com.ds.user.domain.dto.VerifyFormDTO;
 import com.ds.user.domain.po.User;
 import com.ds.user.domain.vo.UserLoginVo;
 import com.ds.user.enums.UserStatus;
@@ -14,7 +13,6 @@ import com.ds.user.service.IUserService;
 import com.ds.user.utils.JwtTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,7 +45,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
      * @return 用户VO
      */
     @Override
-    public UserLoginVo login(@NotNull LoginFormDTO loginDTO) {
+    public UserLoginVo login(LoginFormDTO loginDTO) {
         //1. 数据校验
         String account = loginDTO.getAccount();
         String password = loginDTO.getPassword();
@@ -74,7 +72,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
      * @param registerFormDTO 注册用户信息
      */
     @Override
-    public void register(@NotNull RegisterFormDTO registerFormDTO){
+    public void register(RegisterFormDTO registerFormDTO){
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
         //1. 验证账号是否为空
         Integer count = lambdaQuery().eq(User::getAccount, registerFormDTO.getAccount()).count();
@@ -97,17 +95,5 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         //5. 存入数据库
         User user = RegisterFormDTO.converseTOUser(registerFormDTO);
         userMapper.insert(user);
-    }
-
-    @Override
-    public void verifyRequest(VerifyFormDTO verifyFormDTO) {
-        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        //1. 验证邮箱是否为空
-        Integer count = lambdaQuery().eq(User::getEmail, verifyFormDTO.getEmail()).count();
-        if(count != 0){
-            throw new PreconditionFailed("邮箱已被使用");
-        }
-        //2. 生成验证码
-        //3. 保存
     }
 }
