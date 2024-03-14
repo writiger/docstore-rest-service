@@ -1,10 +1,11 @@
 package com.ds.user.controller;
 
+import com.alibaba.nacos.shaded.org.checkerframework.checker.units.qual.C;
 import com.ds.common.domain.R;
 import com.ds.common.exception.CommonException;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
-import com.ds.user.domain.vo.UserLoginVo;
+import com.ds.user.domain.vo.UserVo;
 import com.ds.user.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +32,8 @@ public class UserController {
 
     @ApiOperation("用户登录接口")
     @PostMapping("login")
-    public R<UserLoginVo> login(@RequestBody @Validated LoginFormDTO loginFormDTO){
-        UserLoginVo loginVo = new UserLoginVo();
+    public R<UserVo> login(@RequestBody @Validated LoginFormDTO loginFormDTO){
+        UserVo loginVo = new UserVo();
         try {
             loginVo = userService.login(loginFormDTO);
         }catch (CommonException e){
@@ -76,4 +77,21 @@ public class UserController {
         }
         return R.ok();
     }
+
+    @ApiOperation("获取个人信息")
+    @GetMapping("")
+    private R<UserVo> info(@RequestHeader("token")String token){
+        UserVo userVo;
+        try{
+            userVo = userService.infoByToken(token);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok(userVo);
+    }
+
 }

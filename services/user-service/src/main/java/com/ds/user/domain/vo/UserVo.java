@@ -11,7 +11,7 @@ import lombok.Data;
  * @create_at 2024-03-09 19:09
  */
 @Data
-public class UserLoginVo {
+public class UserVo {
     private String token;
     private String account;
     private String email;
@@ -22,11 +22,11 @@ public class UserLoginVo {
     private String avatar;
     private String uid;
 
-    public UserLoginVo(){
+    public UserVo(){
 
     }
 
-    public UserLoginVo(User user,String token){
+    public UserVo(User user, String token){
         this.token = token;
         this.account = user.getAccount();
         this.email = user.getEmail();

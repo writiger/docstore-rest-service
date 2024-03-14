@@ -6,7 +6,7 @@ import com.ds.user.config.JwtProperties;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.po.User;
-import com.ds.user.domain.vo.UserLoginVo;
+import com.ds.user.domain.vo.UserVo;
 import com.ds.user.enums.UserStatus;
 import com.ds.user.mapper.UserMapper;
 import com.ds.user.service.IUserService;
@@ -15,12 +15,9 @@ import com.ds.user.utils.VerifyEmail;
 import com.ds.user.utils.VerifyTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +48,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
 
     private final UserMapper userMapper;
 
+    // 此处错误不影响运行
     private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
@@ -62,7 +59,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
      * @return 用户VO
      */
     @Override
-    public UserLoginVo login(LoginFormDTO loginDTO) {
+    public UserVo login(LoginFormDTO loginDTO) {
         //1. 数据校验
         String account = loginDTO.getAccount();
         String password = loginDTO.getPassword();
@@ -82,7 +79,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         //5. 生成TOKEN
         String token = jwtTool.createToken(user.getId(), jwtProperties.getTokenTTL());
         //6. 返回VO
-        return new UserLoginVo(user,token);
+        return new UserVo(user,token);
     }
 
     /**
@@ -143,5 +140,19 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
             throw new BadRequestException("服务器错误，请联系管理员");
         }
         mailSender.send(message);
+    }
+
+    /**
+     * @param token 用户令牌
+     * @return 用户Vo
+     */
+    @Override
+    public UserVo infoByToken(String token){
+        //1. 解析token
+        Long id = jwtTool.parseToken(token);
+        //2. 使用id查询用户
+        User user = lambdaQuery().eq(User::getId,id).one();
+        //3. 返回
+        return new UserVo(user,token);
     }
 }
