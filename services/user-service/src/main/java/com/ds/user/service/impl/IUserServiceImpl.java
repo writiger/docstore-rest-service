@@ -2,6 +2,7 @@ package com.ds.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.common.exception.*;
+import com.ds.common.utils.EMailTool;
 import com.ds.user.config.JwtProperties;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
@@ -11,6 +12,7 @@ import com.ds.user.enums.UserStatus;
 import com.ds.user.mapper.UserMapper;
 import com.ds.user.service.IUserService;
 import com.ds.user.utils.JwtTool;
+import com.ds.user.utils.VerifyTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author writiger
@@ -95,5 +98,25 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         //5. 存入数据库
         User user = RegisterFormDTO.converseTOUser(registerFormDTO);
         userMapper.insert(user);
+    }
+
+    /**
+     * @param email 注册邮箱
+     * */
+    @Override
+    public void VCode(String email){
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        //1. 验证邮箱是否被使用
+        Integer count = lambdaQuery().eq(User::getEmail,email).count();
+        if(count != 0){
+            throw new PreconditionFailed("邮箱已存在");
+        }
+        //2. 生成验证码
+        EMailTool eMailTool = new EMailTool();
+        String VCode = VerifyTool.getVCode();
+        //3. 存入redis
+        ops.set(email,VCode,120, TimeUnit.SECONDS);
+        //4. 发送至邮箱
+        eMailTool.sendVCodeEmail(VCode,email);
     }
 }

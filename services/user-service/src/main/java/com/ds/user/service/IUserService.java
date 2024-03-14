@@ -10,4 +10,6 @@ public interface IUserService extends IService<User> {
     UserLoginVo login(LoginFormDTO loginFormDTO);
 
     void register(RegisterFormDTO registerFormDTO);
+
+    void VCode(String email);
 }

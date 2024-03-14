@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author writiger
@@ -60,6 +57,20 @@ public class UserController {
             // 记录未知错误
             logger.error(e.getMessage());
             return R.error("Unknown Error");
+        }
+        return R.ok();
+    }
+
+    @ApiOperation("获取注册验证码")
+    @GetMapping("/verify/{email}")
+    @ResponseBody
+    public R<Void> verify(@PathVariable("email")String email){
+        try{
+            userService.VCode(email);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            logger.error(e.getMessage());
         }
         return R.ok();
     }
