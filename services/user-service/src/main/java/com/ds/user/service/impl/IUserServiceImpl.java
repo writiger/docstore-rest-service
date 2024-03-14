@@ -11,14 +11,26 @@ import com.ds.user.enums.UserStatus;
 import com.ds.user.mapper.UserMapper;
 import com.ds.user.service.IUserService;
 import com.ds.user.utils.JwtTool;
+import com.ds.user.utils.VerifyEmail;
+import com.ds.user.utils.VerifyTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author writiger
@@ -39,6 +51,11 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
     private final StringRedisTemplate stringRedisTemplate;
 
     private final UserMapper userMapper;
+
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String from;
 
     /**
      * @param loginDTO 登录用户信息
@@ -95,5 +112,36 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         //5. 存入数据库
         User user = RegisterFormDTO.converseTOUser(registerFormDTO);
         userMapper.insert(user);
+    }
+
+    /**
+     * @param email 注册人的邮箱
+     */
+    @Override
+    public void verify(String email){
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        //1. 验证邮箱是否已被使用
+        Integer count = lambdaQuery().eq(User::getEmail, email).count();
+        if(count != 0){
+            throw new PreconditionFailed("邮箱已被使用");
+        }
+        //2. 生成验证码
+        String verifyCode = VerifyTool.generateCode();
+        //3. 存于redis
+        ops.set(email,verifyCode,120, TimeUnit.SECONDS);
+        //4. 发送邮件
+        //创建简单邮件消息
+        MimeMessage message = mailSender.createMimeMessage();
+        VerifyEmail verifyEmail = new VerifyEmail(email,verifyCode);
+        try{
+            MimeMessageHelper minehelper = new MimeMessageHelper(message, true);
+            minehelper.setFrom(from);
+            minehelper.setTo(verifyEmail.getTos());
+            minehelper.setSubject(verifyEmail.getSubject());
+            minehelper.setText(verifyEmail.getContent(),true);
+        }catch (MessagingException me){
+            throw new BadRequestException("服务器错误，请联系管理员");
+        }
+        mailSender.send(message);
     }
 }
