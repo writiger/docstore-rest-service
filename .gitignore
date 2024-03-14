@@ -58,3 +58,5 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 /logs
 **/logs
+services/user-service/src/main/resources/application-test.yaml
+services/user-service/src/main/resources/application-local.yaml
