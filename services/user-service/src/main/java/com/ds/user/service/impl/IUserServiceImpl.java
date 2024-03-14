@@ -3,16 +3,19 @@ package com.ds.user.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.common.exception.*;
 import com.ds.user.config.JwtProperties;
+import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.po.User;
 import com.ds.user.domain.vo.UserVo;
+import com.ds.user.enums.UserLevel;
 import com.ds.user.enums.UserStatus;
 import com.ds.user.mapper.UserMapper;
 import com.ds.user.service.IUserService;
 import com.ds.user.utils.JwtTool;
 import com.ds.user.utils.VerifyEmail;
 import com.ds.user.utils.VerifyTool;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -153,6 +156,47 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         //2. 使用id查询用户
         User user = lambdaQuery().eq(User::getId,id).one();
         //3. 返回
+        return new UserVo(user,token);
+    }
+
+    /**
+     * @param token 用户令牌
+     */
+    @Override
+    public void removeByToken(String token) {
+        //1. 解析token
+        Long id = jwtTool.parseToken(token);
+        //2. 禁止管理员注销自己
+        User user = lambdaQuery().eq(User::getId,id).one();
+        if(!user.getLevel().equals(UserLevel.NORMAL)){
+            throw new ForbiddenException("管理员无权注销自己");
+        }
+        //3. 删除用户
+        userMapper.deleteById(id);
+    }
+
+    @Override
+    public UserVo changeInfoByToken(ChangeFormDTO changeFormDTO, String token) {
+        //1. 验证密码一致性
+        if(!Objects.equals(changeFormDTO.getPassword1(), changeFormDTO.getPassword2())){
+            throw new PreconditionFailed("密码不一致");
+        }
+        //2. 解析token
+        Long id = jwtTool.parseToken(token);
+        //3. 通过token查询用户
+        User user = lambdaQuery().eq(User::getId,id).one();
+        //4. 验证用户否匹配
+        if(!user.getAccount().equals(changeFormDTO.getAccount())){
+            throw new PreconditionFailed("个人信息修改失败");
+        }
+        //5. 修改个人信息
+        user.setName(changeFormDTO.getName());
+        if(!Objects.equals(changeFormDTO.getPassword1(), "")){
+            user.setPassword(passwordEncoder.encode(changeFormDTO.getPassword1()));
+        }
+        user.setAvatar(changeFormDTO.getAvatar());
+        userMapper.updateById(user);
+        //6. 返回修改后的信息
         return new UserVo(user,token);
     }
 }

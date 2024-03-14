@@ -1,8 +1,11 @@
 package com.ds.user.controller;
 
+import com.alibaba.nacos.shaded.org.checkerframework.checker.units.qual.A;
 import com.alibaba.nacos.shaded.org.checkerframework.checker.units.qual.C;
 import com.ds.common.domain.R;
 import com.ds.common.exception.CommonException;
+import com.ds.common.exception.UnauthorizedException;
+import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.vo.UserVo;
@@ -94,4 +97,35 @@ public class UserController {
         return R.ok(userVo);
     }
 
+    @ApiOperation("注销")
+    @DeleteMapping("")
+    private R<Void> remove(@RequestHeader("token")String token){
+        try{
+            userService.removeByToken(token);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok();
+    }
+
+    @ApiOperation("修改个人信息")
+    @PutMapping("")
+    private R<UserVo> change(@RequestHeader("token")String token,
+                             @RequestBody @Validated ChangeFormDTO changeFormDTO){
+        UserVo userVo;
+        try{
+            userVo = userService.changeInfoByToken(changeFormDTO,token);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok(userVo);
+    }
 }
