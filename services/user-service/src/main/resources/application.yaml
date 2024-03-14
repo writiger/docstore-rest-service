@@ -1,0 +1,19 @@
+server:
+  port: 18081
+spring:
+  application:
+    name: user-service
+feign:
+  okhttp:
+    enabled: true
+ds:
+  swagger:
+    title: 用户中心服务接口文档
+    package: com.ds.user.controller
+  jwt:
+    location: classpath:ds.jks
+    alias: dlnu
+    password: 123456
+    tokenTTL: 60m
+mybatis-plus:
+  type-enums-package: com.ds.user.enums
