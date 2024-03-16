@@ -5,6 +5,7 @@ import com.ds.common.exception.*;
 import com.ds.common.utils.ShortUUID;
 import com.ds.user.config.JwtProperties;
 import com.ds.user.domain.dto.ChangeFormDTO;
+import com.ds.user.domain.dto.ChangePasswdFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.po.User;
@@ -222,8 +223,8 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         if(count == 0){
             throw new PreconditionFailed("邮箱并未注册");
         }
-        // 2. 生成验证码
-        String verifyCode = RandomStringUtils.randomAlphanumeric(12);
+        // 2. 生成验证码 8位足够用
+        String verifyCode = RandomStringUtils.randomAlphanumeric(8);
         // 3. 存储验证码 10分钟
         ops.set("pd"+email,verifyCode,600,TimeUnit.SECONDS);
         // 4. 发送验证码
@@ -240,5 +241,26 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         }catch (MessagingException me){
             throw new BadRequestException("服务器错误，请联系管理员");
         }
+    }
+
+    /**
+     * @param changePasswdFormDTO 根据验证码修改密码DTO
+     */
+    @Override
+    public void changePasswd(ChangePasswdFormDTO changePasswdFormDTO,String verifyCode) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        //1. 验证密码是否匹配
+        if(!Objects.equals(changePasswdFormDTO.getPassword1(), changePasswdFormDTO.getPassword2())){
+            throw new PreconditionFailed("密码不匹配");
+        }
+        //2. 验证验证码
+        String v = ops.get("pd"+changePasswdFormDTO.getEmail());
+        if(!Objects.equals(v, verifyCode) || v == null){
+            throw new PreconditionFailed("验证码失效或错误");
+        }
+        //3. 修改密码
+        User user = lambdaQuery().eq(User::getEmail,changePasswdFormDTO.getEmail()).one();
+        user.setPassword(passwordEncoder.encode(changePasswdFormDTO.getPassword1()));
+        userMapper.updateById(user);
     }
 }

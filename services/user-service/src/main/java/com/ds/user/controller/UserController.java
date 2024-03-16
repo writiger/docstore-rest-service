@@ -1,11 +1,9 @@
 package com.ds.user.controller;
 
-import com.alibaba.nacos.shaded.org.checkerframework.checker.units.qual.A;
-import com.alibaba.nacos.shaded.org.checkerframework.checker.units.qual.C;
 import com.ds.common.domain.R;
 import com.ds.common.exception.CommonException;
-import com.ds.common.exception.UnauthorizedException;
 import com.ds.user.domain.dto.ChangeFormDTO;
+import com.ds.user.domain.dto.ChangePasswdFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.vo.UserVo;
@@ -136,6 +134,26 @@ public class UserController {
             userService.verifyPasswd(email);
         }catch (CommonException e){
             return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok();
+    }
+
+    @ApiOperation("通过验证码修改密码")
+    @PutMapping("/passwd/{verifyCode}")
+    private R<Void> changePasswd(@RequestBody @Validated ChangePasswdFormDTO changePasswdFormDTO,
+                                 @PathVariable("verifyCode") String verifyCode){
+        try{
+            userService.changePasswd(changePasswdFormDTO,verifyCode);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
         }
         return R.ok();
     }
