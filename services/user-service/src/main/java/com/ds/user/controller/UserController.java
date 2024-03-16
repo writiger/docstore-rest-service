@@ -128,4 +128,15 @@ public class UserController {
         }
         return R.ok(userVo);
     }
+
+    @ApiOperation("申请修改密码")
+    @PostMapping("/passwd/{email}")
+    private R<Void> lostPasswd(@PathVariable("email") String email){
+        try{
+            userService.verifyPasswd(email);
+        }catch (CommonException e){
+            return R.error(e);
+        }
+        return R.ok();
+    }
 }

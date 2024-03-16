@@ -2,6 +2,7 @@ package com.ds.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.common.exception.*;
+import com.ds.common.utils.ShortUUID;
 import com.ds.user.config.JwtProperties;
 import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
@@ -14,10 +15,12 @@ import com.ds.user.mapper.UserMapper;
 import com.ds.user.service.IUserService;
 import com.ds.user.utils.JwtTool;
 import com.ds.user.utils.VerifyEmail;
+import com.ds.user.utils.VerifyPasswd;
 import com.ds.user.utils.VerifyTool;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -56,6 +59,9 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
 
     @Value("${spring.mail.username}")
     private String from;
+
+    @Value("${ds.web.url}")
+    private String url;
 
     /**
      * @param loginDTO 登录用户信息
@@ -139,10 +145,10 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
             minehelper.setTo(verifyEmail.getTos());
             minehelper.setSubject(verifyEmail.getSubject());
             minehelper.setText(verifyEmail.getContent(),true);
+            mailSender.send(message);
         }catch (MessagingException me){
             throw new BadRequestException("服务器错误，请联系管理员");
         }
-        mailSender.send(message);
     }
 
     /**
@@ -175,6 +181,11 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         userMapper.deleteById(id);
     }
 
+    /**
+     * @param changeFormDTO 修改个人信息表单
+     * @param token token字符串
+     * @return 修改后的用户信息
+     */
     @Override
     public UserVo changeInfoByToken(ChangeFormDTO changeFormDTO, String token) {
         //1. 验证密码一致性
@@ -198,5 +209,36 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         userMapper.updateById(user);
         //6. 返回修改后的信息
         return new UserVo(user,token);
+    }
+
+    /**
+     * @param email 需要修改密码的邮箱
+     */
+    @Override
+    public void verifyPasswd(String email) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        // 1. 验证邮箱是否存在
+        Integer count = lambdaQuery().eq(User::getEmail, email).count();
+        if(count == 0){
+            throw new PreconditionFailed("邮箱并未注册");
+        }
+        // 2. 生成验证码
+        String verifyCode = RandomStringUtils.randomAlphanumeric(12);
+        // 3. 存储验证码 10分钟
+        ops.set("pd"+email,verifyCode,600,TimeUnit.SECONDS);
+        // 4. 发送验证码
+        //创建简单邮件消息
+        MimeMessage message = mailSender.createMimeMessage();
+        VerifyPasswd verifyPasswd = new VerifyPasswd(email,url,verifyCode);
+        try{
+            MimeMessageHelper minehelper = new MimeMessageHelper(message, true);
+            minehelper.setFrom(from);
+            minehelper.setTo(verifyPasswd.getTos());
+            minehelper.setSubject(verifyPasswd.getSubject());
+            minehelper.setText(verifyPasswd.getContent(),true);
+            mailSender.send(message);
+        }catch (MessagingException me){
+            throw new BadRequestException("服务器错误，请联系管理员");
+        }
     }
 }

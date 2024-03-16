@@ -19,4 +19,6 @@ public interface IUserService extends IService<User> {
     void removeByToken(String token);
 
     UserVo changeInfoByToken(ChangeFormDTO changeFormDTO,String token);
+
+    void verifyPasswd(String email);
 }
