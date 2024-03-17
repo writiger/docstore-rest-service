@@ -10,11 +10,6 @@ ds:
   swagger:
     title: 用户中心服务接口文档
     package: com.ds.user.controller
-  jwt:
-    location: classpath:ds.jks
-    alias: dlnu
-    password: 123456
-    tokenTTL: 60m
   web:
     url: http://127.0.0.1:3000
 mybatis-plus:

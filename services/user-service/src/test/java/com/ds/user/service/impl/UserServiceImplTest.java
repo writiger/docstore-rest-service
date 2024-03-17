@@ -1,9 +1,6 @@
 package com.ds.user.service.impl;
 
-import com.ds.common.utils.ShortUUID;
 import com.ds.user.domain.dto.RegisterFormDTO;
-import com.ds.user.enums.UserLevel;
-import com.ds.user.enums.UserStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

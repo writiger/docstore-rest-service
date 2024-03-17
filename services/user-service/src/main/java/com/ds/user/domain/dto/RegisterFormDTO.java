@@ -2,14 +2,13 @@ package com.ds.user.domain.dto;
 
 import com.ds.common.utils.ShortUUID;
 import com.ds.user.domain.po.User;
-import com.ds.user.enums.UserLevel;
-import com.ds.user.enums.UserStatus;
+import com.ds.common.enums.UserLevel;
+import com.ds.common.enums.UserStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 /**
  * @author writiger

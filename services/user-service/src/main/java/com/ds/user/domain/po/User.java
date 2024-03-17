@@ -3,8 +3,8 @@ package com.ds.user.domain.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.ds.user.enums.UserLevel;
-import com.ds.user.enums.UserStatus;
+import com.ds.common.enums.UserLevel;
+import com.ds.common.enums.UserStatus;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

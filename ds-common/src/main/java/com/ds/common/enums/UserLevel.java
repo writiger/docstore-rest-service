@@ -1,4 +1,4 @@
-package com.ds.user.enums;
+package com.ds.common.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.ds.common.exception.BadRequestException;

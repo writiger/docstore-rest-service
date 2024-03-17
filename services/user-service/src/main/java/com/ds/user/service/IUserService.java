@@ -6,16 +6,17 @@ import com.ds.user.domain.dto.ChangePasswdFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.po.User;
-import com.ds.user.domain.vo.UserVo;
+import com.ds.common.domain.vo.UserVo;
+import com.ds.user.domain.vo.UserLoginVO;
 
 public interface IUserService extends IService<User> {
-    UserVo login(LoginFormDTO loginFormDTO);
+    UserLoginVO getPasswd(LoginFormDTO loginFormDTO);
 
     void register(RegisterFormDTO registerFormDTO);
 
     void verify(String email);
 
-    UserVo infoByToken(String token);
+    UserVo infoByToken(String userId);
 
     void removeByToken(String token);
 

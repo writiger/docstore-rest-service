@@ -2,23 +2,18 @@ package com.ds.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.common.exception.*;
-import com.ds.common.utils.ShortUUID;
-import com.ds.user.config.JwtProperties;
 import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.ChangePasswdFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
 import com.ds.user.domain.dto.RegisterFormDTO;
 import com.ds.user.domain.po.User;
-import com.ds.user.domain.vo.UserVo;
-import com.ds.user.enums.UserLevel;
-import com.ds.user.enums.UserStatus;
+import com.ds.common.domain.vo.UserVo;
+import com.ds.common.enums.UserLevel;
+import com.ds.common.enums.UserStatus;
+import com.ds.user.domain.vo.UserLoginVO;
 import com.ds.user.mapper.UserMapper;
 import com.ds.user.service.IUserService;
-import com.ds.user.utils.JwtTool;
-import com.ds.user.utils.VerifyEmail;
-import com.ds.user.utils.VerifyPasswd;
-import com.ds.user.utils.VerifyTool;
-import feign.FeignException;
+import com.ds.user.utils.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,6 +30,8 @@ import javax.mail.internet.MimeMessage;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.ds.user.utils.UserPO2VO.PO2VO;
+
 /**
  * @author writiger
  * @description
@@ -44,13 +41,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
-
-    private final PasswordEncoder passwordEncoder;
-
-    private final JwtTool jwtTool;
-
-    private final JwtProperties jwtProperties;
-
     private final StringRedisTemplate stringRedisTemplate;
 
     private final UserMapper userMapper;
@@ -66,30 +56,27 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
 
     /**
      * @param loginDTO 登录用户信息
-     * @return 用户VO
+     * @return 数据库中保存的密码
      */
     @Override
-    public UserVo login(LoginFormDTO loginDTO) {
+    public UserLoginVO getPasswd(LoginFormDTO loginDTO) {
+        UserLoginVO userLoginVO = new UserLoginVO();
         //1. 数据校验
         String account = loginDTO.getAccount();
-        String password = loginDTO.getPassword();
         //2. 查询用户数据
         User user = lambdaQuery().eq(User::getAccount, account).one();
         if(user==null){
             throw new RangeNotSatisfiable("该账号为空");
         }
-        //3. 验证密码
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadRequestException("用户名或密码错误");
-        }
         //4. 判断用户状态
         if (user.getStatus() == UserStatus.FROZEN) {
             throw new ForbiddenException("用户被封禁");
         }
-        //5. 生成TOKEN
-        String token = jwtTool.createToken(user.getId(), jwtProperties.getTokenTTL());
-        //6. 返回VO
-        return new UserVo(user,token);
+        //6. 返回String
+        userLoginVO.setId(user.getId());
+        userLoginVO.setInPasswd(loginDTO.getPassword());
+        userLoginVO.setOutPasswd(user.getPassword());
+        return userLoginVO;
     }
 
     /**
@@ -108,7 +95,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
             throw new PreconditionFailed("密码不匹配");
         }
         // 密码验证通过加密密码
-        registerFormDTO.setPassword1(passwordEncoder.encode(registerFormDTO.getPassword1()));
+        registerFormDTO.setPassword1(registerFormDTO.getPassword1());
         //3. 验证单位是否存在
         //TODO 调用belong服务
         //4. 验证验证码是否和邮箱匹配
@@ -153,38 +140,31 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
     }
 
     /**
-     * @param token 用户令牌
+     * @param userId 用户id
      * @return 用户Vo
      */
     @Override
-    public UserVo infoByToken(String token){
-        //1. 解析token
-        Long id = jwtTool.parseToken(token);
-        //2. 使用id查询用户
-        User user = lambdaQuery().eq(User::getId,id).one();
-        //3. 返回
-        return new UserVo(user,token);
+    public UserVo infoByToken(String userId){
+        return PO2VO(lambdaQuery().eq(User::getId,userId).one());
     }
 
     /**
-     * @param token 用户令牌
+     * @param token 从用户token中解析出的id
      */
     @Override
     public void removeByToken(String token) {
-        //1. 解析token
-        Long id = jwtTool.parseToken(token);
         //2. 禁止管理员注销自己
-        User user = lambdaQuery().eq(User::getId,id).one();
+        User user = lambdaQuery().eq(User::getId,token).one();
         if(!user.getLevel().equals(UserLevel.NORMAL)){
             throw new ForbiddenException("管理员无权注销自己");
         }
         //3. 删除用户
-        userMapper.deleteById(id);
+        userMapper.deleteById(user.getId());
     }
 
     /**
      * @param changeFormDTO 修改个人信息表单
-     * @param token token字符串
+     * @param token 从用户token中解析出的id
      * @return 修改后的用户信息
      */
     @Override
@@ -193,10 +173,8 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         if(!Objects.equals(changeFormDTO.getPassword1(), changeFormDTO.getPassword2())){
             throw new PreconditionFailed("密码不一致");
         }
-        //2. 解析token
-        Long id = jwtTool.parseToken(token);
         //3. 通过token查询用户
-        User user = lambdaQuery().eq(User::getId,id).one();
+        User user = lambdaQuery().eq(User::getId,token).one();
         //4. 验证用户否匹配
         if(!user.getAccount().equals(changeFormDTO.getAccount())){
             throw new PreconditionFailed("个人信息修改失败");
@@ -204,12 +182,12 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         //5. 修改个人信息
         user.setName(changeFormDTO.getName());
         if(!Objects.equals(changeFormDTO.getPassword1(), "")){
-            user.setPassword(passwordEncoder.encode(changeFormDTO.getPassword1()));
+            user.setPassword(changeFormDTO.getPassword1());
         }
         user.setAvatar(changeFormDTO.getAvatar());
         userMapper.updateById(user);
         //6. 返回修改后的信息
-        return new UserVo(user,token);
+        return PO2VO(user);
     }
 
     /**
@@ -260,7 +238,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         }
         //3. 修改密码
         User user = lambdaQuery().eq(User::getEmail,changePasswdFormDTO.getEmail()).one();
-        user.setPassword(passwordEncoder.encode(changePasswdFormDTO.getPassword1()));
+        user.setPassword(changePasswdFormDTO.getPassword1());
         userMapper.updateById(user);
     }
 }

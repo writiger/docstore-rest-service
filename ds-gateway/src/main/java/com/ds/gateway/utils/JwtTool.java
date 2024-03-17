@@ -1,4 +1,4 @@
-package com.ds.user.utils;
+package com.ds.gateway.utils;
 
 import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.jwt.JWT;
@@ -14,8 +14,8 @@ import java.util.Date;
 
 /**
  * @author writiger
- * @description 生成及解析token
- * @create_at 2024-03-10 21:40
+ * @description
+ * @create_at 2024-03-17 11:26
  */
 @Component
 public class JwtTool {
@@ -58,10 +58,10 @@ public class JwtTool {
             throw new UnauthorizedException("无效的token", e);
         }
         // 2.校验jwt是否有效
-        if (!jwt.verify()) {
-            // 验证失败
-            throw new UnauthorizedException("无效的token");
-        }
+//        if (!jwt.verify()) {
+//            // 验证失败
+//            throw new UnauthorizedException("无效的token");
+//        }
         // 3.校验是否过期
         try {
             JWTValidator.of(jwt).validateDate();

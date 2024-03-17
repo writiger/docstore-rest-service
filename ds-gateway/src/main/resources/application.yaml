@@ -1,0 +1,23 @@
+server:
+  port: 18080
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+ds:
+  jwt:
+    location: classpath:ds.jks
+    alias: dlnu
+    password: 123456
+    tokenTTL: 60m
+  auth:
+    excludePaths:
+      - /user/login

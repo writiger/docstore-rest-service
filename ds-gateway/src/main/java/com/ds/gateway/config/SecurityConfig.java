@@ -1,4 +1,4 @@
-package com.ds.user.config;
+package com.ds.gateway.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +11,9 @@ import java.security.KeyPair;
 
 /**
  * @author writiger
- * @description 加解密密码
- * @create_at 2024-03-10 20:29
+ * @description
+ * @create_at 2024-03-17 11:25
  */
-
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {

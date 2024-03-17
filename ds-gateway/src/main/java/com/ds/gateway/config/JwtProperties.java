@@ -1,4 +1,4 @@
-package com.ds.user.config;
+package com.ds.gateway.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,8 +8,8 @@ import java.time.Duration;
 
 /**
  * @author writiger
- * @description 读取jwt相关配置
- * @create_at 2024-03-10 20:30
+ * @description
+ * @create_at 2024-03-17 11:17
  */
 @Data
 @ConfigurationProperties(prefix = "ds.jwt")
