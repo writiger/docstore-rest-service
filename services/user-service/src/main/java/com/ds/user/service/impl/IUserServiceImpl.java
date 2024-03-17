@@ -149,12 +149,12 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
     }
 
     /**
-     * @param token 从用户token中解析出的id
+     * @param userId 从用户token中解析出的id
      */
     @Override
-    public void removeByToken(String token) {
+    public void removeByToken(String userId) {
         //2. 禁止管理员注销自己
-        User user = lambdaQuery().eq(User::getId,token).one();
+        User user = lambdaQuery().eq(User::getId,userId).one();
         if(!user.getLevel().equals(UserLevel.NORMAL)){
             throw new ForbiddenException("管理员无权注销自己");
         }
@@ -164,17 +164,17 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
 
     /**
      * @param changeFormDTO 修改个人信息表单
-     * @param token 从用户token中解析出的id
+     * @param userId 从用户token中解析出的id
      * @return 修改后的用户信息
      */
     @Override
-    public UserVo changeInfoByToken(ChangeFormDTO changeFormDTO, String token) {
+    public UserVo changeInfoByToken(ChangeFormDTO changeFormDTO, String userId) {
         //1. 验证密码一致性
         if(!Objects.equals(changeFormDTO.getPassword1(), changeFormDTO.getPassword2())){
             throw new PreconditionFailed("密码不一致");
         }
         //3. 通过token查询用户
-        User user = lambdaQuery().eq(User::getId,token).one();
+        User user = lambdaQuery().eq(User::getId,userId).one();
         //4. 验证用户否匹配
         if(!user.getAccount().equals(changeFormDTO.getAccount())){
             throw new PreconditionFailed("个人信息修改失败");

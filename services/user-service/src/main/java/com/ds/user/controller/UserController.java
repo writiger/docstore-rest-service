@@ -100,9 +100,9 @@ public class UserController {
 
     @ApiOperation("注销")
     @DeleteMapping("")
-    private R<Void> remove(@RequestHeader("token")String token){
+    private R<Void> remove(@RequestHeader(AUTH_KEY)String userId){
         try{
-            userService.removeByToken(token);
+            userService.removeByToken(userId);
         }catch (CommonException e){
             return R.error(e);
         }catch (Exception e){
@@ -115,11 +115,11 @@ public class UserController {
 
     @ApiOperation("修改个人信息")
     @PutMapping("")
-    private R<UserVo> change(@RequestHeader("token")String token,
+    private R<UserVo> change(@RequestHeader(AUTH_KEY)String userId,
                              @RequestBody @Validated ChangeFormDTO changeFormDTO){
         UserVo userVo;
         try{
-            userVo = userService.changeInfoByToken(changeFormDTO,token);
+            userVo = userService.changeInfoByToken(changeFormDTO,userId);
         }catch (CommonException e){
             return R.error(e);
         }catch (Exception e){
