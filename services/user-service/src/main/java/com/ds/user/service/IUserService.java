@@ -1,6 +1,7 @@
 package com.ds.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ds.common.enums.UserLevel;
 import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.ChangePasswdFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
@@ -25,4 +26,6 @@ public interface IUserService extends IService<User> {
     void verifyPasswd(String email);
 
     void changePasswd(ChangePasswdFormDTO changePasswdFormDTO,String verifyCode);
+
+    UserLevel getLevel(String userId);
 }

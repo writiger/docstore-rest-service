@@ -1,6 +1,10 @@
 package com.ds.user.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ds.common.domain.query.PageQuery;
 import com.ds.user.domain.dto.RegisterFormDTO;
+import com.ds.user.domain.po.User;
+import com.ds.user.service.IAdminService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,11 +24,8 @@ import javax.annotation.Resource;
 public class UserServiceImplTest {
     @Resource
     private IUserServiceImpl userService;
-
-    @Test
-    public void testGetUserList(){
-        userService.login(null);
-    }
+    @Resource
+    private IAdminService adminService;
 
     @Test
     public void testAccountIsExist(){
@@ -46,4 +47,14 @@ public class UserServiceImplTest {
         userService.register(user);
     }
 
+    @Test
+    public void testUserList(){
+        PageQuery query = new PageQuery();
+        query.setPageSize(2);
+        query.setPageNo(1);
+        Page<User> userList = adminService.lambdaQuery().ne(User::getLevel,2).page(query.toMpPage());
+        for(User user:userList.getRecords()){
+            System.out.println(user);
+        }
+    }
 }

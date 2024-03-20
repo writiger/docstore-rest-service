@@ -2,6 +2,7 @@ package com.ds.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ds.common.exception.*;
+import com.ds.common.utils.BeanUtils;
 import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.ChangePasswdFormDTO;
 import com.ds.user.domain.dto.LoginFormDTO;
@@ -145,7 +146,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
      */
     @Override
     public UserVo infoByToken(String userId){
-        return PO2VO(lambdaQuery().eq(User::getId,userId).one());
+        return BeanUtils.copyBean(lambdaQuery().eq(User::getId,userId).one(),UserVo.class);
     }
 
     /**
@@ -240,5 +241,16 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         User user = lambdaQuery().eq(User::getEmail,changePasswdFormDTO.getEmail()).one();
         user.setPassword(changePasswdFormDTO.getPassword1());
         userMapper.updateById(user);
+    }
+
+    /**
+     * @param userId 用户id字符串
+     * @return 用户等级
+     */
+    @Override
+    public UserLevel getLevel(String userId) {
+        Long id = Long.parseLong(userId);
+        User user = lambdaQuery().eq(User::getId,id).one();
+        return user.getLevel();
     }
 }

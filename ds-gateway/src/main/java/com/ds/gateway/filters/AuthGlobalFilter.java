@@ -53,7 +53,6 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         // 2.判断是否不需要登录拦截
         if(isExclude(request.getPath().toString())){
             if(isLogin(request.getPath().toString())){
-
                 return chain.filter(exchange.mutate()
                         .response(decorator)
                         .build());
