@@ -6,18 +6,25 @@ import com.ds.gateway.config.JwtProperties;
 import com.ds.gateway.utils.JwtTool;
 import com.ds.gateway.utils.ResponseDecorator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import static com.ds.common.constants.Constants.AUTH_KEY;
@@ -27,6 +34,7 @@ import static com.ds.common.constants.Constants.AUTH_KEY;
  * @description 全局登录校验过滤器
  * @create_at 2024-03-17 11:32
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
@@ -44,7 +52,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         //返回体装饰器
-        ResponseDecorator decorator = new ResponseDecorator(exchange.getResponse(),
+        ResponseDecorator decoratorRes = new ResponseDecorator(exchange.getResponse(),
                 jwtTool,
                 jwtProperties.getTokenTTL(),
                 passwordEncoder);
@@ -54,7 +62,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         if(isExclude(request.getPath().toString())){
             if(isLogin(request.getPath().toString())){
                 return chain.filter(exchange.mutate()
-                        .response(decorator)
+                        .response(decoratorRes)
                         .build());
             }
             // 放行

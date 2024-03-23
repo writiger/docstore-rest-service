@@ -182,13 +182,13 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         }
         //5. 修改个人信息
         user.setName(changeFormDTO.getName());
-        if(!Objects.equals(changeFormDTO.getPassword1(), "")){
+        if(!Objects.equals(changeFormDTO.getPassword1(), null)){
             user.setPassword(changeFormDTO.getPassword1());
         }
         user.setAvatar(changeFormDTO.getAvatar());
         userMapper.updateById(user);
         //6. 返回修改后的信息
-        return PO2VO(user);
+        return BeanUtils.copyBean(user,UserVo.class);
     }
 
     /**

@@ -19,12 +19,10 @@ public class ChangeFormDTO {
     @ApiModelProperty(value = "账号", required = true)
     private String account;
 
-    @NotNull(message = "密码不能为空")
-    @ApiModelProperty(value = "密码", required = true)
+    @ApiModelProperty(value = "密码")
     private String password1;
 
-    @NotNull(message = "重复密码不能为空")
-    @ApiModelProperty(value = "密码", required = true)
+    @ApiModelProperty(value = "密码")
     private String password2;
 
     @NotNull(message = "用户名不能为空")
@@ -34,4 +32,7 @@ public class ChangeFormDTO {
     @NotNull(message = "头像url不能为空")
     @ApiModelProperty(value="头像",required = true)
     private String avatar;
+
+    @ApiModelProperty(value="用户id",required = false)
+    private Long id;
 }
