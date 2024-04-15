@@ -10,4 +10,10 @@ import java.util.List;
 
 public interface IAdminService extends IService<User> {
     void changeInfoByToken(ChangeFormDTO changeFormDTO);
+
+    void ban(String account);
+
+    void unban(String account);
+
+    void add(String account, String userId);
 }
