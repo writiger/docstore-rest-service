@@ -248,9 +248,8 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
      * @return 用户等级
      */
     @Override
-    public UserLevel getLevel(String userId) {
-        Long id = Long.parseLong(userId);
-        User user = lambdaQuery().eq(User::getId,id).one();
+    public UserLevel getLevel(Long userId) {
+        User user = lambdaQuery().eq(User::getId,userId).one();
         return user.getLevel();
     }
 }

@@ -1,6 +1,7 @@
 package com.ds.user.controller;
 
 import com.ds.common.domain.R;
+import com.ds.common.enums.UserLevel;
 import com.ds.common.exception.CommonException;
 import com.ds.user.domain.dto.ChangeFormDTO;
 import com.ds.user.domain.dto.ChangePasswdFormDTO;
@@ -159,5 +160,21 @@ public class UserController {
             return R.error("Unknown Error");
         }
         return R.ok();
+    }
+
+    @ApiOperation("验证用户等级")
+    @GetMapping("/level/{userId}")
+    private R<UserLevel>  getLevel(@PathVariable("userId") Long userId){
+        UserLevel level;
+        try{
+            level = userService.getLevel(userId);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok(level);
     }
 }

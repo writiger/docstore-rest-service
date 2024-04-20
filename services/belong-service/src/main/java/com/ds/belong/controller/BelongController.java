@@ -6,13 +6,15 @@ import com.ds.belong.service.IBelongService;
 import com.ds.common.domain.R;
 import com.ds.common.domain.dto.PageDTO;
 import com.ds.common.domain.query.PageQuery;
-import com.ds.common.enums.UserLevel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.ds.common.constants.Constants.AUTH_KEY;
 
 /**
  * @author writiger
@@ -29,10 +31,9 @@ public class BelongController {
 
     @ApiOperation("查询所属列表")
     @GetMapping("/list")
-    public R<PageDTO<Belong>> belongList(PageQuery pageQuery){
+    public R<PageDTO<Belong>> belongList(@RequestHeader(AUTH_KEY)Long userId,PageQuery pageQuery){
         Page<Belong> belongList;
-        belongList = belongService.lambdaQuery().page(pageQuery.toMpPage());
-        System.out.println();
+        belongList = belongService.belongList(pageQuery,userId);
         return R.ok(PageDTO.of(belongList));
     }
 }

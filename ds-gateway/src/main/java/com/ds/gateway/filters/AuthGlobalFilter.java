@@ -93,7 +93,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         return chain.filter(serverWebExchange);
     }
 
-    //遍历配置文件中需要验证的路径的
+    //遍历配置文件中需要放行的路径的
     private boolean isExclude(String path) {
         for (String pathPattern : authProperties.getExcludePaths()) {
             if(antPathMatcher.match(pathPattern,path)) {

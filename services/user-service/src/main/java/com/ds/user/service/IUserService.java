@@ -27,5 +27,5 @@ public interface IUserService extends IService<User> {
 
     void changePasswd(ChangePasswdFormDTO changePasswdFormDTO,String verifyCode);
 
-    UserLevel getLevel(String userId);
+    UserLevel getLevel(Long userId);
 }
