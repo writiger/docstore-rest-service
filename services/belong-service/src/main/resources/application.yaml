@@ -1,0 +1,16 @@
+server:
+  port: 18082
+spring:
+  application:
+    name: belong-service
+feign:
+  okhttp:
+    enabled: true
+ds:
+  swagger:
+    title: 所属服务接口文档
+    package: com.ds.user.controller
+  web:
+    url: http://127.0.0.1:3000
+mybatis-plus:
+  type-enums-package: com.ds.user.enums
