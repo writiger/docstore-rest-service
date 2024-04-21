@@ -27,3 +27,4 @@ ds:
       - /user/login
       - /user/register
       - /user/verify/**
+      - /belong/list

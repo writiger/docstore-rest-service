@@ -27,17 +27,11 @@ public class IBelongServiceImpl extends ServiceImpl<BelongMapper, Belong> implem
 
     /**
      * @param pageQuery 分页参数
-     * @param userId 用户ID
      * @return 所属列表
      */
     @Override
-    public Page<Belong> belongList(PageQuery pageQuery,Long userId) {
-        //1. 验证是否为root
-        UserLevel userLevel = userClient.getLevel(userId).getData();
-        if(userLevel != UserLevel.ROOT){
-            throw new ForbiddenException("仅超级管理员可查看");
-        }
-        //2. 返回错误
+    public Page<Belong> belongList(PageQuery pageQuery) {
+        //TODO使用redis提高效率
         return lambdaQuery().page(pageQuery.toMpPage());
     }
 }

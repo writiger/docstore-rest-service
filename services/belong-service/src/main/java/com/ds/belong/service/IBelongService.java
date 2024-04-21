@@ -6,5 +6,5 @@ import com.ds.belong.domain.po.Belong;
 import com.ds.common.domain.query.PageQuery;
 
 public interface IBelongService extends IService<Belong> {
-    Page<Belong> belongList(PageQuery pageQuery,Long userId);
+    Page<Belong> belongList(PageQuery pageQuery);
 }
