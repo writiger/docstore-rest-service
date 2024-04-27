@@ -33,7 +33,7 @@ public class BelongController {
     @GetMapping("/list")
     public R<PageDTO<Belong>> belongList(@RequestHeader(AUTH_KEY)Long userId,PageQuery pageQuery){
         Page<Belong> belongList;
-        belongList = belongService.belongList(pageQuery,userId);
+        belongList = belongService.belongList(pageQuery);
         return R.ok(PageDTO.of(belongList));
     }
 }

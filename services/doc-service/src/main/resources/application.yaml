@@ -1,0 +1,14 @@
+server:
+  port: 18083
+spring:
+  application:
+    name: doc-service
+feign:
+  okhttp:
+    enabled: true
+ds:
+  swagger:
+    title: 文献服务接口文档
+    package: com.ds.doc.controller
+  web:
+    url: http://127.0.0.1:3000
