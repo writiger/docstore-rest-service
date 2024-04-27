@@ -16,6 +16,10 @@ spring:
           uri: lb://belong-service
           predicates:
             - Path=/belong/**
+        - id: doc-service
+          uri: lb://doc-service
+          predicates:
+            - Path=/doc/**
 ds:
   jwt:
     location: classpath:ds.jks
