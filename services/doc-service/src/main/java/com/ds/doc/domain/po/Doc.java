@@ -1,8 +1,6 @@
 package com.ds.doc.domain.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -31,21 +29,25 @@ public class Doc implements Serializable {
     /**
      * 主题
      */
+    @TableField(condition = SqlCondition.LIKE)
     private String theme;
 
     /**
      * 作者（用分号分割）
      */
+    @TableField(condition = SqlCondition.LIKE)
     private String author;
 
     /**
      * 摘要
      */
+    @TableField(condition = SqlCondition.LIKE)
     private String digest;
 
     /**
      * 关键词（使用分号分割）
      */
+    @TableField(condition = SqlCondition.LIKE)
     private String keyword;
 
     /**
