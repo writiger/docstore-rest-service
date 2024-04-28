@@ -10,6 +10,9 @@ spring:
       routes:
         - id: user-service
           uri: lb://user-service
+          filters:
+            # 解决跨域问题
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
           predicates:
             - Path=/user/**,/admin/**
         - id: belong-service
