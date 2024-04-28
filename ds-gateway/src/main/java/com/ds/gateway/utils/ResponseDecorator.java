@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * @author writiger
@@ -72,8 +73,14 @@ public class ResponseDecorator extends ServerHttpResponseDecorator {
         JSONObject json2 = new JSONObject(json.get("data"));
         String in = (String) json2.get("inPasswd");
         String out = (String) json2.get("outPasswd");
-        if (!passwordEncoder.matches(in,out)){
-            json.set("code", HttpStatus.BAD_REQUEST.value());
+        if(Objects.equals(in, null) || Objects.equals(out, null)){
+            json.set("code", HttpStatus.FORBIDDEN.value());
+            json.set("msg","账号不存在");
+            json.remove("data");
+            return json.toString();
+        }
+        if(!passwordEncoder.matches(in,out)){
+            json.set("code", HttpStatus.FORBIDDEN.value());
             json.set("msg","密码或账号错误");
             json.remove("data");
             return json.toString();
