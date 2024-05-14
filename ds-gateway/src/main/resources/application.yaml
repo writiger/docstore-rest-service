@@ -23,12 +23,16 @@ spring:
           uri: lb://doc-service
           predicates:
             - Path=/doc/**
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+            - Path=/file/**
 ds:
   jwt:
     location: classpath:ds.jks
     alias: dlnu
     password: 123456
-    tokenTTL: 60m
+    tokenTTL: 10080m
   auth:
     excludePaths:
       - /user/login
@@ -36,3 +40,4 @@ ds:
       - /user/verify/**
       - /belong/list
       - /doc/search/**
+      - /file/**

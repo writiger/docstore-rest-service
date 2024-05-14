@@ -6,6 +6,8 @@ import com.ds.belong.service.IBelongService;
 import com.ds.common.domain.R;
 import com.ds.common.domain.dto.PageDTO;
 import com.ds.common.domain.query.PageQuery;
+import com.ds.common.enums.UserLevel;
+import com.ds.common.exception.CommonException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.ds.common.constants.Constants.AUTH_KEY;
 
@@ -31,9 +35,16 @@ public class BelongController {
 
     @ApiOperation("查询所属列表")
     @GetMapping("/list")
-    public R<PageDTO<Belong>> belongList(@RequestHeader(AUTH_KEY)Long userId,PageQuery pageQuery){
-        Page<Belong> belongList;
-        belongList = belongService.belongList(pageQuery);
-        return R.ok(PageDTO.of(belongList));
+    public R<List<Belong>> belongList(){
+        List<Belong> belongList;
+        try{
+            belongList = belongService.lambdaQuery().list();
+        }catch (CommonException e){
+            // 返回自定义错误
+            return R.error(e);
+        }catch (Exception e){
+            return R.error("Unknown Error");
+        }
+        return R.ok(belongList);
     }
 }

@@ -103,7 +103,7 @@ public class AdminController {
 
     @ApiOperation("模糊查询查询用户列表")
     @GetMapping("/user/like/{col}")
-    public R<PageDTO<User>> getUserInfo(PageQuery pageQuery,@PathVariable("col") String col){
+    public R<PageDTO<User>> getUserLike(PageQuery pageQuery,@PathVariable("col") String col){
         Page<User> userList;
         try{
             userList = adminService.lambdaQuery().ne(User::getLevel, UserLevel.ROOT)

@@ -63,3 +63,4 @@ services/user-service/src/main/resources/application-local.yaml
 ds-gateway/src/main/resources/application.yaml
 services/belong-service/src/main/resources/application-local.yaml
 services/doc-service/src/main/resources/application.yaml
+services/file-service/src/main/resources/application-local.yaml
