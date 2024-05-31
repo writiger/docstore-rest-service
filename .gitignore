@@ -64,3 +64,5 @@ ds-gateway/src/main/resources/application.yaml
 services/belong-service/src/main/resources/application-local.yaml
 services/doc-service/src/main/resources/application.yaml
 services/file-service/src/main/resources/application-local.yaml
+services/comment-service/src/main/resources/application.yaml
+services/comment-service/src/main/resources/bootstrap.yaml

@@ -28,4 +28,6 @@ public interface IUserService extends IService<User> {
     void changePasswd(ChangePasswdFormDTO changePasswdFormDTO,String verifyCode);
 
     UserLevel getLevel(Long userId);
+
+    void changeName(String name,String userId);
 }

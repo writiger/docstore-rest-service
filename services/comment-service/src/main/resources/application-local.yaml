@@ -1,0 +1,6 @@
+ds:
+  db:
+    host: 127.0.0.1
+    database: ds_comment
+    un: root
+    pw: 123456

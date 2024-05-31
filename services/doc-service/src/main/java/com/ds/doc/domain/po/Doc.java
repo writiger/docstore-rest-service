@@ -50,4 +50,9 @@ public class Doc implements Serializable {
      * 文件后缀
      */
     private String suffix;
+
+    /**
+     * 所属
+     */
+    private String belong;
 }

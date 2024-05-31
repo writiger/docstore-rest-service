@@ -19,7 +19,7 @@ public class UserPO2VO {
         userVo.setBelong(user.getBelong());
         userVo.setStatus(user.getStatus());
         userVo.setAvatar(user.getAvatar());
-        userVo.setUid(user.getUuid());
+        userVo.setUuid(user.getUuid());
         return userVo;
     }
 }

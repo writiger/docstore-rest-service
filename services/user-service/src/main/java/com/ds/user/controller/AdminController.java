@@ -125,4 +125,21 @@ public class AdminController {
         }
         return R.ok(PageDTO.of(userList));
     }
+
+    @GetMapping("/user/banned")
+    public R<PageDTO<User>> getBannedUser(PageQuery pageQuery){
+        Page<User> userList;
+        try{
+            userList = adminService.lambdaQuery().eq(User::getStatus,0)
+                    .page(pageQuery.toMpPage());
+        }catch (CommonException e){
+            // 返回自定义错误
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok(PageDTO.of(userList));
+    }
 }

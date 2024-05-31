@@ -2,7 +2,6 @@ package com.ds.file.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ds.common.domain.R;
-import com.ds.file.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
@@ -102,5 +101,25 @@ public class FileController {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    @ApiOperation("删除文件")
+    @DeleteMapping("")
+    public void delete(String uuid,String suffix){
+        try{
+            String path = ResourceUtils.getURL("classpath:").getPath()+UPLOAD_FOLDER;
+            // path是指想要删除的文件的路径
+            File file = new File(path+"/"+uuid+suffix);
+            System.out.println(file);
+            //路径是个文件且不为空时删除文件
+            if(file.isFile() && file.exists()){
+                if(!file.delete()){
+                    throw new IOException();
+                }
+            }
+        }catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
     }
 }

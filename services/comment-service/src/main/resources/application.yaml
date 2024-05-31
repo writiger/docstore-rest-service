@@ -1,0 +1,16 @@
+server:
+  port: 18085
+spring:
+  application:
+    name: comment-service
+feign:
+  okhttp:
+    enabled: true
+ds:
+  swagger:
+    title: 评论服务接口文档
+    package: com.ds.comment.controller
+  web:
+    url: http://127.0.0.1:3000
+mybatis-plus:
+  type-enums-package: com.ds.comment.enums

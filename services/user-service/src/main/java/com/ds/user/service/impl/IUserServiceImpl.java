@@ -1,6 +1,8 @@
 package com.ds.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ds.api.client.BelongClient;
+import com.ds.common.domain.R;
 import com.ds.common.exception.*;
 import com.ds.common.utils.BeanUtils;
 import com.ds.user.domain.dto.ChangeFormDTO;
@@ -25,6 +27,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -45,6 +48,8 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
     private final StringRedisTemplate stringRedisTemplate;
 
     private final UserMapper userMapper;
+
+    private final BelongClient belongClient;
 
     // 此处错误不影响运行
     private final JavaMailSender mailSender;
@@ -95,10 +100,11 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
         if(!Objects.equals(registerFormDTO.getPassword1(), registerFormDTO.getPassword2())){
             throw new PreconditionFailed("密码不匹配");
         }
-        // 密码验证通过加密密码
-        registerFormDTO.setPassword1(registerFormDTO.getPassword1());
         //3. 验证单位是否存在
-        //TODO 调用belong服务
+        R<Boolean> existR = belongClient.isExist(registerFormDTO.getBelong());
+        if(!existR.getData()){
+            throw new BadRequestException("所属不存在");
+        }
         //4. 验证验证码是否和邮箱匹配
         String v = ops.get(registerFormDTO.getEmail());
         if(!Objects.equals(v, registerFormDTO.getVerify()) || v == null){
@@ -251,5 +257,12 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User> implements I
     public UserLevel getLevel(Long userId) {
         User user = lambdaQuery().eq(User::getId,userId).one();
         return user.getLevel();
+    }
+
+    @Override
+    public void changeName(String newName,String userId){
+        User user = lambdaQuery().eq(User::getId,userId).one();
+        user.setName(newName);
+        userMapper.updateById(user);
     }
 }

@@ -23,10 +23,16 @@ spring:
           uri: lb://doc-service
           predicates:
             - Path=/doc/**
+          filters:
+            - name: CustomLoadBalancer
         - id: file-service
           uri: lb://file-service
           predicates:
             - Path=/file/**
+        - id: comment-service
+          uri: lb://comment-service
+          predicates:
+            - Path=/comment/**
 ds:
   jwt:
     location: classpath:ds.jks
@@ -37,7 +43,10 @@ ds:
     excludePaths:
       - /user/login
       - /user/register
+      - /user/passwd/**
       - /user/verify/**
       - /belong/list
       - /doc/search/**
       - /file/**
+      - /belong/exist/**
+      - /comment/search/**

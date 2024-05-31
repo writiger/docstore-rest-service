@@ -19,5 +19,5 @@ public class UserVo {
     private String belong;
     private UserStatus status;
     private String avatar;
-    private String uid;
+    private String uuid;
 }

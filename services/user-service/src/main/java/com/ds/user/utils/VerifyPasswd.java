@@ -28,7 +28,7 @@ public class VerifyPasswd extends ToEmail {
                 "        <strong>请访问如下地址修改密码</strong>\n" +
                 "        <br>\n" +
                 "        <strong>\n" +
-                "            <a href='"+url+"/passwd/verify/"+verifyCode+"'>点我修改</a>\n" +
+                "            <a href='"+url+"/#/forget/"+verifyCode+"'>点我修改</a>\n" +
                 "        </strong>\n" +
                 "        <br>\n" +
                 "        如非本人操作请忽略此邮件.\n" +

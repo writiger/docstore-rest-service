@@ -1,24 +1,18 @@
 package com.ds.belong.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ds.belong.domain.po.Belong;
 import com.ds.belong.service.IBelongService;
 import com.ds.common.domain.R;
-import com.ds.common.domain.dto.PageDTO;
-import com.ds.common.domain.query.PageQuery;
-import com.ds.common.enums.UserLevel;
 import com.ds.common.exception.CommonException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import static com.ds.common.constants.Constants.AUTH_KEY;
 
 /**
  * @author writiger
@@ -46,5 +40,19 @@ public class BelongController {
             return R.error("Unknown Error");
         }
         return R.ok(belongList);
+    }
+
+    @GetMapping("/exist/{name}")
+    public R<Boolean> isExist(@PathVariable(value="name") String name){
+        boolean res= false;
+        try{
+            Belong one = belongService.lambdaQuery().eq(Belong::getName, name).one();
+            if(one != null){
+                res = true;
+            }
+        }catch (Exception e){
+            return R.error("Unknown Error");
+        }
+        return R.ok(res);
     }
 }

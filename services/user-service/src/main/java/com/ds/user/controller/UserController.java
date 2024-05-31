@@ -177,4 +177,19 @@ public class UserController {
         }
         return R.ok(level);
     }
+
+    @ApiOperation("修改昵称")
+    @PutMapping("/name/{name}")
+    private R<Void> changeName(@PathVariable("name") String name,@RequestHeader(AUTH_KEY)String userId){
+        try{
+            userService.changeName(name,userId);
+        }catch (CommonException e){
+            return R.error(e);
+        }catch (Exception e){
+            // 记录未知错误
+            logger.error(e.getMessage());
+            return R.error("Unknown Error");
+        }
+        return R.ok();
+    }
 }
