@@ -1,0 +1,14 @@
+knife4j:
+  enable: true
+  openapi:
+    title: ${ds.swagger.title:DocStore接口文档}
+    description: ${ds.swagger.desc:DocStore接口文档}
+    email: 731924080@qq.com
+    concat: writiger
+    version: v1.0.0
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - ${ds.swagger.package}

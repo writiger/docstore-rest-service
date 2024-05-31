@@ -1,0 +1,7 @@
+logging:
+  level:
+    com.ds: debug
+  pattern:
+    dateformat: HH:mm:ss:SSS
+  file:
+    path: ${ds.logging.path:"logs/spring.application.name"}
